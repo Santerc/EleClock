@@ -1,0 +1,20 @@
+[submodule "DjiDevice"]
+	url  = https://gitee.com/bitrm2024-firmware/sheriff-os_-dji-motor
+	path = DjiDevice
+
+[submodule "SheriffOS"]
+	url  = https://gitee.com/bitrm2024-firmware/sheriff-os
+	path = SheriffOS
+
+[submodule "threadx"]
+	url  = https://gitee.com/bitrm2024-firmware/sheriff-os_-threadx
+	path = threadx
+
+[submodule "Proto"]
+	url  = https://gitee.com/bitrm2024-firmware/sentry-jakiro-proto
+	path = Proto
+
+[submodule "BSP"]
+	url  = https://gitee.com/bitrm2024-firmware/sheriff-os_-bitg474-v4_-bsp
+	path = BSP
+
