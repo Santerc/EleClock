@@ -39,19 +39,21 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
-# Add BSP generated sources
-add_subdirectory(BSP)
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC bsp)
+
 # ------ 添加源文件 ------
 file(GLOB_RECURSE source_c CONFIGURE_DEPENDS
-        App/*.cpp App/*.h
+        User/*.cpp User/*.h
+        BSP/*.cpp BSP/*.h
 )
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
         ${source_c}
 )
 # ------ 添加头文件目录 ------
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-        App/include
+        User/App/include
+        User/Periph/include
+        User/Config
+        BSP/include
 )
 
 # Link directories setup
@@ -74,9 +76,9 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
 )
 
-## Add linked libraries
-#target_link_libraries(${CMAKE_PROJECT_NAME}
-#    stm32cubemx
-#
-#    # Add user defined libraries
-#)
+# Add linked libraries
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    stm32cubemx
+
+    # Add user defined libraries
+)

@@ -1,0 +1,8 @@
+//
+// Created by LENOVO on 2024/10/24.
+//
+
+#ifndef ELECLOCK_INIT_CONFIG_H
+#define ELECLOCK_INIT_CONFIG_H
+
+#endif //ELECLOCK_INIT_CONFIG_H
