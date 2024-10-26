@@ -8,8 +8,8 @@ namespace bsp{
 
     class PWMGenerator {
     public:
-        PWMGenerator(TIM_HandleTypeDef *htim, uint32_t ch, float duty)
-                : htim_(htim), channel_(ch), duty_(duty), state_(PWM_State::kOff) {
+        PWMGenerator(TIM_HandleTypeDef *htim, uint32_t ch)
+                : htim_(htim), channel_(ch), duty_(0), state_(PWM_State::kOff) {
             // Initialization code can be added here if necessary
         }
 
