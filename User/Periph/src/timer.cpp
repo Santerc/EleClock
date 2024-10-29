@@ -44,27 +44,51 @@ uint8_t Timer::GetHour() const{
 
 void Timer::AddHour(){
     hour_ ++;
+    if(hour_ == 24){
+        hour_ = 0;
+        stop_ = true;
+    }
 }
 
 void Timer::AddMinute(){
     minute_ ++;
+    if(minute_ == 60){
+        AddHour();
+        minute_ = 0;
+    }
 }
 
 void Timer::AddSecond(){
     second_ ++;
+    if(second_ == 60){
+        AddMinute();
+        second_ = 0;
+    }
 }
 
 
 void Timer::MinusHour(){
     hour_ --;
+    if(hour_ < 0) {
+        hour_ = 23;
+        stop_ = true;
+    }
 }
 
 void Timer::MinusMinute(){
     minute_ --;
+    if(minute_ < 0) {
+        MinusHour();
+        minute_ = 59;
+    }
 }
 
 void Timer::MinusSecond(){
     second_ --;
+    if(second_ < 0){
+        MinusMinute();
+        second_ = 59;
+    }
 }
 
 

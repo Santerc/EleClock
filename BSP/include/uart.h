@@ -24,6 +24,17 @@ namespace bsp{
           */
         void InitDMA();
 
+        void DisableDMA(){
+            __HAL_DMA_DISABLE(huart_->hdmatx);
+        }
+
+        void EnableDMA(){
+            __HAL_DMA_ENABLE(huart_->hdmatx);
+        }
+        void DMASetCounter(uint16_t counter){
+            huart_->hdmatx->Instance->CNDTR = counter;
+        }
+
         /**
           * @brief      向UART串口发送信息（阻塞模式）
           * @param      txdata: 要发送的信息
