@@ -10,7 +10,6 @@ namespace bsp{
     public:
         PWMGenerator(TIM_HandleTypeDef *htim, uint32_t ch)
                 : htim_(htim), channel_(ch), duty_(0), state_(PWM_State::kOff) {
-            // Initialization code can be added here if necessary
         }
 
         PWMGenerator() = default;
@@ -24,6 +23,8 @@ namespace bsp{
         void Stop();
 
         void SetDuty(float duty);
+
+        void SetPsc(int16_t psc);
 
         void Output();
 

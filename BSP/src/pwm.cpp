@@ -23,6 +23,10 @@ void PWMGenerator::SetDuty(float duty) {
 
 }
 
+void PWMGenerator::SetPsc(int16_t psc){
+    htim_->Instance->PSC = psc;
+}
+
 void PWMGenerator::Output(){
     if(state_ == PWM_State::kOn){
         __HAL_TIM_SetCompare(htim_, channel_, duty_ * htim_->Init.Period);

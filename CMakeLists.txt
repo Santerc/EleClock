@@ -52,7 +52,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         User/App/include
         User/Periph/include
-        User/Config
+        User/Config/include
         BSP/include
 )
 

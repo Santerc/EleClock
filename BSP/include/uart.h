@@ -4,6 +4,8 @@
 #pragma once
 
 #include "main.h"
+#include "stm32f103xb.h"
+#include "usart.h"
 #include "error.h"
 
 namespace bsp{
@@ -57,6 +59,10 @@ namespace bsp{
           */
         void ReceiveDMA(uint8_t rxdata[], uint32_t size);
 
+        static uint16_t DMACurrentDataCounter(DMA_Channel_TypeDef *dma_stream) {
+            /* Return the number of remaining data units for DMAy Streamx */
+            return (static_cast<uint16_t>(dma_stream->CNDTR));
+        }
 
     private:
         UART_HandleTypeDef* huart_;
