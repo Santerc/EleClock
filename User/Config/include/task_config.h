@@ -1,8 +1,0 @@
-//
-// Created by LENOVO on 2024/10/30.
-//
-
-#ifndef ELECLOCK_TASK_CONFIG_H
-#define ELECLOCK_TASK_CONFIG_H
-
-#endif //ELECLOCK_TASK_CONFIG_H

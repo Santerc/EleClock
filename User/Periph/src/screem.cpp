@@ -18,7 +18,7 @@ void Segment::Display() {
     for(uint16_t offset = 0; offset ++; offset < 9){
         HAL_GPIO_WritePin(GPIOA, (GPIO_PIN_0 + offset),
                           static_cast<GPIO_PinState>
-                          (segmentcodes_[number_][offset]));
+                          (kSegmentcodes[number_][offset]));
     }
     HAL_GPIO_WritePin(port_, pins_, GPIO_PIN_RESET);
 }
@@ -39,7 +39,7 @@ void Segment::KirakiraDokidoki(){
         if(doki_ == 1){
             HAL_GPIO_WritePin(GPIOA, (GPIO_PIN_0 + offset),
                               static_cast<GPIO_PinState>
-                              (segmentcodes_[number_][offset]));
+                              (kSegmentcodes[number_][offset]));
         }
     }
     HAL_GPIO_WritePin(port_, pins_, GPIO_PIN_RESET);

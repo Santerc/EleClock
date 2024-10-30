@@ -15,7 +15,7 @@ void Uart::SendMessage(uint8_t const* txdata, uint16_t size, uint32_t timeout) {
     uint32_t ret = HAL_UART_Transmit(huart_, txdata, size, timeout);
     if (ret != HAL_OK) {
         /* Transmission request Error */
-        Uart_ErrorHandler(ret);
+        //Uart_ErrorHandler(ret);
     }
 }
 void Uart::SendMessage_IT(uint8_t const* txdata, uint16_t size) {

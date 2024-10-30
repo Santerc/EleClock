@@ -70,9 +70,9 @@ namespace bsp{
           */
         void ReceiveDMA(uint8_t rxdata[], uint32_t size);
 
-        static uint16_t DMACurrentDataCounter(DMA_Channel_TypeDef *dma_stream) {
+        uint16_t DMACurrentDataCounter() const{
             /* Return the number of remaining data units for DMAy Streamx */
-            return (static_cast<uint16_t>(dma_stream->CNDTR));
+            return (static_cast<uint16_t>(huart_->hdmarx->Instance->CNDTR));
         }
 
     private:

@@ -2,7 +2,8 @@
 // Created by LENOVO on 2024/10/24.
 //
 
-#ifndef ELECLOCK_CLOCK_H
-#define ELECLOCK_CLOCK_H
+#pragma once
 
-#endif //ELECLOCK_CLOCK_H
+void clock_init();
+
+void clock_task();

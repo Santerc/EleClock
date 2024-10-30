@@ -63,7 +63,7 @@ namespace cretnas{
             uart_.DisableDMA();
 
             /* handle uart data from DMA */
-            int Len = TERMINAL_RX_BUFFER_LEN - bsp::Uart::DMACurrentDataCounter(huart->hdmarx->Instance);
+            int Len = TERMINAL_RX_BUFFER_LEN - uart_.DMACurrentDataCounter();
 
             Decode(buffer_, Len);
             /* restart dma transmission */
