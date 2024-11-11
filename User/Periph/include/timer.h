@@ -5,15 +5,12 @@
 
 #pragma once
 
+#include <time_math.h>
 #include <cstdint>
 
 namespace cretnas{
 
-    struct Time {
-      uint16_t hour_;
-      uint16_t minute_;
-      uint16_t second_;
-    };
+
 
     class Timer {
     public:
@@ -47,7 +44,7 @@ namespace cretnas{
 
         bool IsStop() const;
     private:
-        Time time_;
+        math::Time time_;
         bool stop_;
     };
 }

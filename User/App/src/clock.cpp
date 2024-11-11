@@ -106,7 +106,7 @@ public:
     }
 
     bool AlbumCheck() {
-      if(timer_.GetHour() == )
+      if(timer_.)
     }
 
 private:
@@ -155,45 +155,45 @@ enum class GPIOPin : uint16_t {
   kLeft = GPIO_PIN_11,
   kPlus = GPIO_PIN_15,
   kMinus = GPIO_PIN_14,
-  kStartStop = GPIO_PIN_13,
-  kSetting = GPIO_PIN_10,
+  kStart = GPIO_PIN_13,
+  kStop = GPIO_PIN_10,
 };
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-    switch(GPIO_Pin) {
-      case GPIO_PIN_12:
-        eleclock.ConserRight();
-        break;
-      case GPIO_PIN_11:
-        eleclock.ConserLeft();
-        break;
-      case GPIO_PIN_15:
-        if(eleclock.isSetTime()) {
-          eleclock.timePlus_[static_cast<int>(eleclock.GetCorser())];
-        }
-        break;
-      case GPIO_PIN_14:
-        if(eleclock.isSetTime()) {
-          eleclock.timeMinus_[static_cast<int>(eleclock.GetCorser())];
-        }
-        break;
-      case GPIO_PIN_13:
-        if(eleclock.isSetTime()) {
-          eleclock.SettingMode(false);
-        }else {
-          eleclock.Start();
-        }
-        break;
-      case GPIO_PIN_10:
-        if(eleclock.isStop()) {
-          eleclock.SettingMode(true);
-        }else {
-          eleclock.Stop();
-        }
-        break;
-      default:
-        break;
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  auto pin = static_cast<std::optional<GPIOPin>>(std::nullopt);
+  switch (GPIO_Pin) {
+    case GPIO_PIN_12: pin = GPIOPin::kRight; break;
+    case GPIO_PIN_11: pin = GPIOPin::kLeft; break;
+    case GPIO_PIN_15: pin = GPIOPin::kPlus; break;
+    case GPIO_PIN_14: pin = GPIOPin::kMinus; break;
+    case GPIO_PIN_13: pin = GPIOPin::kStart; break;
+    case GPIO_PIN_10: pin = GPIOPin::kStop; break;
+    default: return;
+  }
 
+  // 定义不同模式下的行为
+  auto in_setting_mode = [&]() {
+    switch (*pin) {
+      case GPIOPin::kRight: eleclock.ConserRight(); break;
+      case GPIOPin::kLeft: eleclock.ConserLeft(); break;
+      case GPIOPin::kPlus: eleclock.timePlus_[static_cast<int>(eleclock.GetCorser())]; break;
+      case GPIOPin::kMinus: eleclock.timeMinus_[static_cast<int>(eleclock.GetCorser())]; break;
+      case GPIOPin::kStart: eleclock.SettingMode(false); break;
+      default: break;
     }
+  };
+
+  auto in_normal_mode = [&]() {
+    switch (*pin) {
+      case GPIOPin::kStart: eleclock.Start(); break;
+      case GPIOPin::kStop:
+        eleclock.isStop() ? eleclock.SettingMode(true) : eleclock.Stop();
+      break;
+      default: break;
+    }
+  };
+
+  // 根据当前模式执行相应的操作
+  eleclock.isSetTime() ? in_setting_mode() : in_normal_mode();
 }
 
 /**
