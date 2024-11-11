@@ -14,7 +14,7 @@ namespace bsp{
 
         PWMGenerator() = default;
 
-        ~PWMGenerator();
+        ~PWMGenerator() = default;
 
         void Init();
 

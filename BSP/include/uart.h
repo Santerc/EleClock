@@ -15,7 +15,7 @@ namespace bsp{
         Uart(UART_HandleTypeDef* huart){
             huart_ = huart;
         }
-        ~Uart();
+        ~Uart() = default;
 
         /**
           * @brief      初始化UART DMA

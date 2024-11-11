@@ -32,12 +32,15 @@ namespace cretnas{
                 : port_(port), pins_(pins) {
             errcode_ = kNoError;
             number_ = 0;
-            HAL_GPIO_WritePin(port_, pins_, GPIO_PIN_RESET);
         }
 
         Segment() = default;
 
-        ~Segment();
+        ~Segment() = default;
+
+        void Init() const {
+          HAL_GPIO_WritePin(port_, pins_, GPIO_PIN_RESET);
+        }
 
         void SetNumber(uint8_t number);
 

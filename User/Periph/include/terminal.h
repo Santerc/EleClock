@@ -7,8 +7,8 @@
 namespace cretnas{
     /*
      * 0123456789012345
-     * Time:  00:00:00\0
-     * Alarm: 00:00:00\0
+     * Time:00:00:00\0
+     * Alarm:00:00:00\0
      * */
 
     class Terminal{
@@ -29,7 +29,7 @@ namespace cretnas{
             minute_ = 0;
             second_ = 0;
         }
-        ~Terminal();
+        ~Terminal() = default;
 
         void Init(){
             uart_.InitDMA();
@@ -37,18 +37,18 @@ namespace cretnas{
         }
 
         void Decode(uint8_t* buff, int rxdatalen){
-            switch(buff[0]){
-                case 'T':
+            switch(rxdatalen){
+                case 14:
                     cmd_ = kSetTime;
-                    hour_ = (10 * buff[7] + buff[8]);
-                    minute_ = (10 * buff[10] + buff[11]);
-                    second_ = (10 * buff[13] + buff[14]);
+                    hour_ = (10 * buff[5] + buff[6]);
+                    minute_ = (10 * buff[8] + buff[9]);
+                    second_ = (10 * buff[11] + buff[12]);
                     break;
-                case 'A':
+                case 15:
                     cmd_ = kSetAlarm;
-                    hour_ = (10 * buff[7] + buff[8]);
-                    minute_ = (10 * buff[10] + buff[11]);
-                    second_ = (10 * buff[13] + buff[14]);
+                    hour_ = (10 * buff[6] + buff[7]);
+                    minute_ = (10 * buff[9] + buff[10]);
+                    second_ = (10 * buff[12] + buff[13]);
                     break;
                 default:
                     cmd_ = kError;

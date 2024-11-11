@@ -8,12 +8,19 @@
 #include <cstdint>
 
 namespace cretnas{
+
+    struct Time {
+      uint16_t hour_;
+      uint16_t minute_;
+      uint16_t second_;
+    };
+
     class Timer {
     public:
         Timer(){
-            second_ = 0;
-            minute_ = 0;
-            hour_ = 0;
+            time_.second_ = 0;
+            time_.minute_ = 0;
+            time_.hour_ = 0;
             stop_ = true;
         }
 
@@ -40,9 +47,7 @@ namespace cretnas{
 
         bool IsStop() const;
     private:
-        uint8_t second_;
-        uint8_t minute_;
-        uint8_t hour_;
+        Time time_;
         bool stop_;
     };
 }

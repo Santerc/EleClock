@@ -16,78 +16,78 @@ void Timer::Stop(){
 
 
 void Timer::SetTime(uint8_t second, uint8_t minute, uint8_t hour){
-    hour_ = hour;
-    second_ = second;
-    minute_ = minute;
+    time_.hour_ = hour;
+    time_.second_ = second;
+    time_.minute_ = minute;
 }
 
 
 void Timer::Clear(){
-    hour_ = 0;
-    second_ = 0;
-    minute_ = 0;
+    time_.hour_ = 0;
+    time_.second_ = 0;
+    time_.minute_ = 0;
 }
 
 
 uint8_t Timer::GetSecond() const{
-    return second_;
+    return time_.second_;
 }
 
 uint8_t Timer::GetMinute() const{
-    return minute_;
+    return time_.minute_;
 }
 
 uint8_t Timer::GetHour() const{
-    return hour_;
+    return time_.hour_;
 }
 
 
 void Timer::AddHour(){
-    hour_ ++;
-    if(hour_ == 24){
-        hour_ = 0;
+    time_.hour_ ++;
+    if(time_.hour_ == 24){
+        time_.hour_ = 0;
         stop_ = true;
     }
 }
 
 void Timer::AddMinute(){
-    minute_ ++;
-    if(minute_ == 60){
+    time_.minute_ ++;
+    if(time_.minute_ == 60){
         AddHour();
-        minute_ = 0;
+        time_.minute_ = 0;
     }
 }
 
 void Timer::AddSecond(){
-    second_ ++;
-    if(second_ == 60){
+    time_.second_ ++;
+    if(time_.second_ == 60){
         AddMinute();
-        second_ = 0;
+        time_.second_ = 0;
     }
 }
 
 
 void Timer::MinusHour(){
-    hour_ --;
-    if(hour_ < 0) {
-        hour_ = 23;
+    time_.hour_ --;
+    if(time_.hour_ < 0) {
+        time_.hour_ = 23;
         stop_ = true;
     }
 }
 
 void Timer::MinusMinute(){
-    minute_ --;
-    if(minute_ < 0) {
+    time_.minute_ --;
+    if(time_.minute_ < 0) {
         MinusHour();
-        minute_ = 59;
+        time_.minute_ = 59;
     }
 }
 
 void Timer::MinusSecond(){
-    second_ --;
-    if(second_ < 0){
+    time_.second_ --;
+    if(time_.second_ < 0){
         MinusMinute();
-        second_ = 59;
+        time_.second_ = 59;
     }
 }
 

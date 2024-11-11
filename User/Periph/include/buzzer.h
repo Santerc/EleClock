@@ -25,12 +25,15 @@ namespace cretnas{
         };
         Buzzer(TIM_HandleTypeDef* htim, uint32_t ch, uint32_t bpm) :
         bpm_(bpm), pwm_(htim, ch) {
-            pwm_.Start();
         }
 
         Buzzer() = default;
 
-        ~Buzzer();
+        ~Buzzer() = default;
+
+        void Init() {
+          pwm_.Start();
+        }
 
         void SetBPM(uint32_t bpm);
         void Play(int8_t key, int8_t level, int8_t beat);
