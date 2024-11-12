@@ -6,16 +6,12 @@
 using namespace bsp;
 
 void PWMGenerator::Start() {
-    if (state_ == PWM_State::kOff) {
         HAL_TIM_PWM_Start(htim_, channel_);
         state_ = PWM_State::kOn;
-    }
 }
 void PWMGenerator::Stop() {
-    if (state_ == PWM_State::kOn) {
         HAL_TIM_PWM_Stop(htim_, channel_);
         state_ = PWM_State::kOff;
-    }
 }
 void PWMGenerator::SetDuty(float duty) {
 

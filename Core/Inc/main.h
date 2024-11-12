@@ -75,6 +75,8 @@ void Error_Handler(void);
 #define DOWN_Pin GPIO_PIN_15
 #define DOWN_GPIO_Port GPIOB
 #define DOWN_EXTI_IRQn EXTI15_10_IRQn
+#define ALARM_Pin GPIO_PIN_8
+#define ALARM_GPIO_Port GPIOA
 #define CURSER_LEFT_Pin GPIO_PIN_11
 #define CURSER_LEFT_GPIO_Port GPIOA
 #define CURSER_LEFT_EXTI_IRQn EXTI15_10_IRQn

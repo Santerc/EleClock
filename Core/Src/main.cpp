@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -64,6 +63,8 @@ void SystemClock_Config(void);
   * @brief  The application entry point.
   * @retval int
   */
+uint64_t tick = 0;
+uint8_t* num;
 int main(void)
 {
 
@@ -89,30 +90,74 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_TIM1_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  eleclock = Clock(&huart1, &htim1, TIM_CHANNEL_1, HOUR_T_CS_GPIO_Port,
+  eleclock = Clock(&huart1, HOUR_T_CS_GPIO_Port,
                HOUR_T_CS_Pin, HOUR_O_CS_GPIO_Port, HOUR_O_CS_Pin,
                MIN_T_CS_GPIO_Port, MIN_T_CS_Pin, MIN_O_CS_GPIO_Port,
                MIN_O_CS_Pin, SEC_T_CS_GPIO_Port, SEC_T_CS_Pin,
                SEC_O_CS_GPIO_Port, SEC_O_CS_Pin);
   eleclock.Init();
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while (true)
   {
     /* USER CODE END WHILE */
-    if(eleclock.AlarmCheck()) {
-      eleclock.AlarmRing();
+    if(eleclock.AlarmCheck() == true) {  //
+      HAL_GPIO_WritePin(ALARM_GPIO_Port, ALARM_Pin, GPIO_PIN_SET);
+      HAL_UART_Transmit_IT(&huart1,
+                           reinterpret_cast<uint8_t const*>("alarm!\r\n"), 8);
+      tick = HAL_GetTick();
     }
-    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+    if (HAL_GetTick() - tick > 5000) {
+        HAL_GPIO_WritePin(ALARM_GPIO_Port, ALARM_Pin, GPIO_PIN_RESET);
+    }
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
     eleclock.TubeSetNum();
     eleclock.TubeDisplay();
+    // HAL_UART_Transmit_IT(&huart1, reinterpret_cast<uint8_t const*>("12\n"), 3);
+    // HAL_Delay(2);
+    eleclock.RxCallback();
+
+    switch(eleclock.GetCmd()) {
+      case cretnas::Terminal::kError:
+        eleclock.SendMsg(reinterpret_cast<uint8_t const*>(
+            "ErrorMsg ! You Can type Help for more Help :-)\r\n"));
+        HAL_Delay(2);
+        eleclock.FinishCmd();
+        break;
+      case cretnas::Terminal::kSetTime:
+        eleclock.SetTime();
+        eleclock.FinishCmd();
+        break;
+      case cretnas::Terminal::kSetAlarm:
+        eleclock.AlarmAdd();
+        eleclock.FinishCmd();
+        break;
+      case cretnas::Terminal::kDeleteAlarm:
+        eleclock.AlarmDelete();
+        eleclock.FinishCmd();
+        break;
+      case cretnas::Terminal::kShowAlarm:
+        eleclock.AlarmShow();
+
+        eleclock.FinishCmd();
+        break;
+      case cretnas::Terminal::kHelp:
+        eleclock.SendMsg(reinterpret_cast<uint8_t const*>(
+            "* Time:00:00:00\r\n* Alarm:00:00:00\r\n* ShowAlarm\r\n* "
+            "Delete:0\r\n* Help\r\n"));
+        HAL_Delay(2);
+        eleclock.FinishCmd();
+        break;
+      default:
+        break;
+    }
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -166,7 +211,7 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
   if (htim == &htim2) {
     if (!eleclock.isStop()) {
-      eleclock.timePlus_[static_cast<int>(position::kSecond)];
+      eleclock.TikTok();
     }
   }
 }
@@ -179,7 +224,11 @@ enum class GPIOPin : uint16_t {
   kStart = GPIO_PIN_13,
   kStop = GPIO_PIN_10,
 };
+
+uint64_t last_exit_tick = 0;
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+  if (HAL_GetTick() - last_exit_tick > 100) {
+    last_exit_tick = HAL_GetTick();
   switch(GPIO_Pin) {
     case GPIO_PIN_12:
       eleclock.ConserRight();
@@ -189,12 +238,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     break;
     case GPIO_PIN_15:
       if(eleclock.isSetTime()) {
-        eleclock.timePlus_[static_cast<int>(eleclock.GetCorser())];
+        if(eleclock.GetCorser() == kSecond) {
+          eleclock.Splus();
+        }else if(eleclock.GetCorser() == kMinute) {
+          eleclock.Mplus();
+        }else if(eleclock.GetCorser() == kHour) {
+          eleclock.Hplus();
+        }
       }
     break;
     case GPIO_PIN_14:
       if(eleclock.isSetTime()) {
-        eleclock.timeMinus_[static_cast<int>(eleclock.GetCorser())];
+        if(eleclock.GetCorser() == kSecond) {
+          eleclock.SMinus();
+        }else if(eleclock.GetCorser() == kMinute) {
+          eleclock.MMinus();
+        }else if(eleclock.GetCorser() == kHour) {
+          eleclock.HMinus();
+        }
       }
     break;
     case GPIO_PIN_13:
@@ -213,7 +274,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     break;
     default:
       break;
-
+  }
   }
 }
 
@@ -222,22 +283,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
  * @param      huart: uart IRQHandler id
  * @retval     无
  */
-void Uart_RxIdleCallback(UART_HandleTypeDef* huart) {
-  if (huart == &huart1) {
-    eleclock.RxCallback();
-  }
-}
+// void Uart_RxIdleCallback(UART_HandleTypeDef* huart) {
+//   if (huart == &huart1) {
+//     eleclock.RxCallback();
+//   }
+// }
 
-void Uart_ReceiveHandler(UART_HandleTypeDef* huart) {
-  // clear idle it flag after uart receive a frame data
-  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) &&
-      __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
-    /* clear idle it flag avoid idle interrupt all the time */
-    __HAL_UART_CLEAR_IDLEFLAG(huart);
-    /* handle received data in idle interrupt */
-        Uart_RxIdleCallback(huart);
-    }
-}
+// void Uart_ReceiveHandler(UART_HandleTypeDef* huart) {
+//   HAL_GPIO_WritePin(ALARM_GPIO_Port, ALARM_Pin, GPIO_PIN_SET);
+//   // clear idle it flag after uart receive a frame data
+//   if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) &&
+//       __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
+//     /* clear idle it flag avoid idle interrupt all the time */
+//     __HAL_UART_CLEAR_IDLEFLAG(huart);
+//     /* handle received data in idle interrupt */
+//     eleclock.SendMsg(reinterpret_cast<uint8_t const*>("I REC\r\n"));
+//         Uart_RxIdleCallback(huart);
+//     }
+// }
 /* USER CODE END 4 */
 
 /**

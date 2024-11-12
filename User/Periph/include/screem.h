@@ -56,7 +56,7 @@ namespace cretnas{
         ErrCode errcode_;
         uint8_t number_;
 
-        int8_t doki_ = 1;
+        int32_t doki_ = 1;
 
         // 数字到 7 段的编码，假定以共阳模式
 
