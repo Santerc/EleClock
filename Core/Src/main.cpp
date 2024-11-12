@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "clock.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+Clock eleclock;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,7 +94,12 @@ int main(void)
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  eleclock = Clock(&huart1, &htim1, TIM_CHANNEL_1, HOUR_T_CS_GPIO_Port,
+               HOUR_T_CS_Pin, HOUR_O_CS_GPIO_Port, HOUR_O_CS_Pin,
+               MIN_T_CS_GPIO_Port, MIN_T_CS_Pin, MIN_O_CS_GPIO_Port,
+               MIN_O_CS_Pin, SEC_T_CS_GPIO_Port, SEC_T_CS_Pin,
+               SEC_O_CS_GPIO_Port, SEC_O_CS_Pin);
+  eleclock.Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,7 +107,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    if(eleclock.AlarmCheck()) {
+      eleclock.AlarmRing();
+    }
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+    eleclock.TubeSetNum();
+    eleclock.TubeDisplay();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -148,7 +158,86 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+ * @brief      定时器中断回调函数
+ * @param      htim: 指针指向定时器句柄
+ * @retval     无
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
+  if (htim == &htim2) {
+    if (!eleclock.isStop()) {
+      eleclock.timePlus_[static_cast<int>(position::kSecond)];
+    }
+  }
+}
 
+enum class GPIOPin : uint16_t {
+  kRight = GPIO_PIN_12,
+  kLeft = GPIO_PIN_11,
+  kPlus = GPIO_PIN_15,
+  kMinus = GPIO_PIN_14,
+  kStart = GPIO_PIN_13,
+  kStop = GPIO_PIN_10,
+};
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+  switch(GPIO_Pin) {
+    case GPIO_PIN_12:
+      eleclock.ConserRight();
+    break;
+    case GPIO_PIN_11:
+      eleclock.ConserLeft();
+    break;
+    case GPIO_PIN_15:
+      if(eleclock.isSetTime()) {
+        eleclock.timePlus_[static_cast<int>(eleclock.GetCorser())];
+      }
+    break;
+    case GPIO_PIN_14:
+      if(eleclock.isSetTime()) {
+        eleclock.timeMinus_[static_cast<int>(eleclock.GetCorser())];
+      }
+    break;
+    case GPIO_PIN_13:
+      if(eleclock.isSetTime()) {
+        eleclock.SettingMode(false);
+      }else {
+        eleclock.Start();
+      }
+    break;
+    case GPIO_PIN_10:
+      if(eleclock.isStop()) {
+        eleclock.SettingMode(true);
+      }else {
+        eleclock.Stop();
+      }
+    break;
+    default:
+      break;
+
+  }
+}
+
+/**
+ * @brief      UART RX 回调分配函数
+ * @param      huart: uart IRQHandler id
+ * @retval     无
+ */
+void Uart_RxIdleCallback(UART_HandleTypeDef* huart) {
+  if (huart == &huart1) {
+    eleclock.RxCallback();
+  }
+}
+
+void Uart_ReceiveHandler(UART_HandleTypeDef* huart) {
+  // clear idle it flag after uart receive a frame data
+  if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) &&
+      __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
+    /* clear idle it flag avoid idle interrupt all the time */
+    __HAL_UART_CLEAR_IDLEFLAG(huart);
+    /* handle received data in idle interrupt */
+        Uart_RxIdleCallback(huart);
+    }
+}
 /* USER CODE END 4 */
 
 /**

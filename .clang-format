@@ -55,5 +55,4 @@ RawStringFormats:
 
 CommentPragmas: "(@copydoc|@copybrief|@see|@overload|@snippet)"
 
-# 屏幕都很宽
 ColumnLimit: 80

@@ -15,10 +15,8 @@ void Timer::Stop(){
 }
 
 
-void Timer::SetTime(uint8_t second, uint8_t minute, uint8_t hour){
-    time_.hour_ = hour;
-    time_.second_ = second;
-    time_.minute_ = minute;
+void Timer::SetTime(math::Time time){
+    time_ = time;
 }
 
 

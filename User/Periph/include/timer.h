@@ -26,7 +26,10 @@ namespace cretnas{
         void Start();
         void Stop();
 
-        void SetTime(uint8_t second, uint8_t minute, uint8_t hour);
+        void SetTime(math::Time time);
+        math::Time GetTime() {
+          return time_;
+        }
 
         void Clear();
 
@@ -44,7 +47,12 @@ namespace cretnas{
 
         bool IsStop() const;
     private:
-        math::Time time_;
+        math::Time time_ = {
+          .hour_ = 0,
+          .minute_ = 0,
+          .second_ = 0
+
+        };
         bool stop_;
     };
 }
