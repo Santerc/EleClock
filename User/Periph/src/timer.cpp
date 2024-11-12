@@ -42,7 +42,7 @@ uint8_t Timer::GetHour() const{
 
 void Timer::AddHour(){
     time_.hour_ ++;
-    if(time_.hour_ == 24){
+    if(time_.hour_ >= 24){
         time_.hour_ = 0;
         stop_ = true;
     }
@@ -50,7 +50,7 @@ void Timer::AddHour(){
 
 void Timer::AddMinute(){
     time_.minute_ ++;
-    if(time_.minute_ == 60){
+    if(time_.minute_ >= 60){
         AddHour();
         time_.minute_ = 0;
     }
@@ -58,7 +58,7 @@ void Timer::AddMinute(){
 
 void Timer::AddSecond(){
     time_.second_ ++;
-    if(time_.second_ == 60){
+    if(time_.second_ >= 60){
         AddMinute();
         time_.second_ = 0;
     }

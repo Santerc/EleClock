@@ -60,12 +60,15 @@ class Terminal {
         time_.second_ = (10 * (buff[12] - '0') + (buff[13] - '0'));
         break;
       case 'H':
+        __NOP();
         cmd_ = kHelp;
         break;
       case 'S':
+        __NOP();
         cmd_ = kShowAlarm;
         break;
       case 'D':
+        __NOP();
         id_ = (buff[7] - '0');
         cmd_ = kDeleteAlarm;
         break;

@@ -139,6 +139,7 @@ int main(void)
         eleclock.FinishCmd();
         break;
       case cretnas::Terminal::kDeleteAlarm:
+        __NOP();
         eleclock.AlarmDelete();
         eleclock.FinishCmd();
         break;

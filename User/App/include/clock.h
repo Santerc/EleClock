@@ -151,6 +151,7 @@ class Clock {
     }
   }
   void AlarmDelete() {
+    terminal_.SendMsg(reinterpret_cast<uint8_t const*>("Error id!\n"));
     if (terminal_.GetId() < alarm_times_.size()) {
       alarm_times_.erase(alarm_times_.begin() + terminal_.GetId());
     } else {
