@@ -36,9 +36,10 @@ class Terminal {
   ~Terminal() = default;
 
   void Init() {
+
     // uart_.InitDMA();
     // uart_.ReceiveDMA(buffer_, TERMINAL_RX_BUFFER_LEN);
-    //HAL_UART_Receive_IT(&huart1, buffer_, TERMINAL_RX_BUFFER_LEN);
+    HAL_UART_Receive_IT(&huart1, buffer_, 15);
   }
 
   void FinishCmd() {
@@ -92,20 +93,11 @@ class Terminal {
   //   uart_.EnableDMA();
   // }
   void RxCallBack() {
-    // HAL_UART_Transmit_IT(&huart1, reinterpret_cast<uint8_t const*>("56\n"), 3);
-    // HAL_Delay(4);
-    if (HAL_UART_Receive(&huart1, buffer_, 15, 1000) == HAL_OK) {
       Decode(buffer_, 15);
-    }
-
-    // 读取数据直到回车符
-
-
-    // 处理接收到的数据
-
+      HAL_UART_Receive_IT(&huart1, buffer_, 15);
   }
 
-  void SendMsg(uint8_t const* msg) { uart_.SendMessage_IT(msg, sizeof(msg)); }
+  void SendMsg(uint8_t const* msg) { uart_.SendMessage_IT(msg, 256); }//sizeof(msg)
 
   Commend GetCmd() const { return cmd_; }
 
